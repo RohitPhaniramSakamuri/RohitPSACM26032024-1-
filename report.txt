@@ -1,0 +1,38 @@
+Author dowloaded images from huggingfaces dataset of Pepe. All files were recieved as .webp, so user ran iterative program on the dowloaded set, converted all images to png.
+Author then procured images from various datasets, including different types of frogs, various animals, random sceneries, small objects, animated characters etc and put together a set of images 'not_pepe'.
+Author then created 3 folders, 'train', 'test' and 'val', in each of which there was two classes, Pepe and not_pepe.
+Author then manually split the dataset into train, test and val categories respectively.
+Author then iteratively converted images to 224x224 resolution for ease of use. The work mentioned till now is present in frogs.ipynb.
+
+Author proceeds to build further code using Pytorch.
+Author employs transfer learning using ResNet18, fully connected layers.
+Data transformations for very simple data augmentation and normalization are applied.
+All layers except final classification layer are frozen. Dataset is used to train the last layer.
+Loss criteria is taken to be CrossEntropyLoss() and optimiser as SDG, with learning rate = 0.001 and momentum 0.9.
+
+The function train_model takes several parameters: model (the neural network model to be trained), criterion (the loss function), optimizer (the optimization algorithm), and num_epochs (the number of training epochs, with a default value of 15).
+The function iterates over each epoch from 1 to num_epochs.
+Within each epoch, it iterates over three phases: 'train', 'val', and 'test'. This indicates that the training loop is structured to handle training, validation, and testing phases separately.
+If the current phase is 'train', the model is set to training mode (model.train()). If it's not 'train', the model is set to evaluation mode (model.eval()).
+Within each phase loop, the running loss and running correct predictions are initialized to zero.
+It then iterates over the data batches from the dataloaders corresponding to the current phase ('train', 'val', or 'test').
+For each batch, the inputs and labels are transferred to the appropriate device (e.g., GPU) if available.
+The optimizer's gradients are zeroed with optimizer.zero_grad().
+Inside a with torch.set_grad_enabled(phase == 'train') block, the forward pass is performed by passing the inputs through the model (outputs = model(inputs)), and predictions are made by selecting the class with the highest probability (_, preds = torch.max(outputs, 1)). The loss is then calculated using the provided criterion (loss = criterion(outputs, labels)).
+If the current phase is 'train', the gradients are computed (loss.backward()) and the optimizer updates the model parameters (optimizer.step()).
+Running loss and correct predictions are updated based on the current batch.
+After iterating over all batches in the current phase, the epoch loss and accuracy are calculated by dividing the total running loss and correct predictions by the total dataset size.
+
+the model is then saved as PepeOrNotClassifier.Pytorch
+
+using matplotlib, loss vs. epochs and accuracy vs. epochs are plotted.
+
+The above can be found in imageNet.ipynb
+
+Author also attempted to reduce losses and was successful, however resulted in accuracy ~9%. The approach was scrapped (9file.py).
+Accuracy 97% with near 0 losses. Model is likely overfit. Probable causes might diversity of dataset and complexity of resnet.
+
+
+
+
+
